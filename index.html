@@ -3,231 +3,499 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard Karyawan</title>
+  <title>Dashboard Karyawan - Demo</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    body{font-family:Roboto,Arial,sans-serif;background:#f4f4f4;margin:0;padding:18px;color:#222}
-    .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.06);margin-bottom:18px}
-    h3,h4{margin:0 0 10px 0}
-    input,select,button{font-size:14px}
-    input,select{width:100%;padding:8px;margin:6px 0;border:1px solid #ddd;border-radius:6px}
+    :root{--primary:#4CAF50;--secondary:#2196F3;--danger:#f44336;--light:#f4f4f4;--white:#fff}
+    *{box-sizing:border-box}
+    body{font-family:Roboto,Arial,sans-serif;background:var(--light);color:#222;margin:0;padding:18px}
+    .login-form,.card{background:var(--white);padding:16px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.06);margin-bottom:18px}
+    .login-form{max-width:760px;margin:36px auto;text-align:center}
+    input,select,button,textarea{font-size:14px}
+    input,select,textarea{width:100%;padding:10px;margin:8px 0;border:1px solid #ddd;border-radius:6px}
     button{padding:8px 12px;border-radius:6px;border:0;cursor:pointer}
-    .btn-primary{background:#4CAF50;color:#fff}
-    .btn-secondary{background:#2196F3;color:#fff}
-    .btn-danger{background:#f44336;color:#fff}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-secondary{background:var(--secondary);color:#fff}
+    .btn-danger{background:var(--danger);color:#fff}
+    header.app-header{background:var(--primary);color:#fff;padding:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto 12px}
+    .container{max-width:1200px;margin:0 auto}
     table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{border:1px solid #e6e6e6;padding:6px;text-align:center}
-    th{background:#4CAF50;color:#fff}
-    img.profile-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #ddd}
+    th,td{border:1px solid #e6e6e6;padding:8px;text-align:center;vertical-align:middle}
+    th{background:var(--primary);color:#fff}
+    .action-buttons{display:flex;gap:8px;justify-content:center}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media(max-width:720px){.grid-2{grid-template-columns:1fr}}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    @media(max-width:920px){.grid-3{grid-template-columns:1fr};.grid-2{grid-template-columns:1fr}}
+    .small{font-size:0.9rem;color:#666}
+    .file-name{font-size:0.9rem;color:#444;margin-top:6px}
+    img.profile-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid #ddd}
+    .flex-right{display:flex;gap:8px;align-items:center}
+    .top-actions{display:flex;gap:8px;align-items:center}
   </style>
 </head>
 <body>
-
-  <div class="card">
-    <h3>Form Karyawan</h3>
-    <input type="hidden" id="editId" value="">
-    <div class="grid-2">
-      <input id="nama" type="text" placeholder="Nama Lengkap">
-      <input id="nik" type="text" placeholder="NIK (unik)">
-      <input id="alamat" type="text" placeholder="Alamat">
-      <input id="telepon" type="text" placeholder="Telepon">
-    </div>
-    <div class="grid-2">
-      <input id="mulai" type="date">
-      <input id="pendidikan" type="text" placeholder="Pendidikan">
-      <input id="jabatan" type="text" placeholder="Jabatan">
-      <input id="status" type="text" placeholder="Status">
-    </div>
-    <div class="grid-2">
-      <input id="fileUpload" type="file">
-      <input id="fotoUpload" type="file" accept="image/*">
-    </div>
-    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
-      <button id="clearBtn" class="btn-secondary">Clear</button>
-      <button id="saveBtn" class="btn-primary">Simpan</button>
+  <!-- LOGIN -->
+  <div id="loginScreen" class="login-form">
+    <h2><i class="fas fa-user-lock"></i> Login Demo</h2>
+    <p class="small">Pilih peran: Admin (edit/hapus) atau Operator (input saja).</p>
+    <div style="max-width:480px;margin:0 auto;text-align:left">
+      <label>Peran</label>
+      <select id="roleSelect">
+        <option value="operator">Operator</option>
+        <option value="admin">Admin</option>
+      </select>
+      <label>Username</label>
+      <input id="loginUser" type="text" placeholder="username">
+      <label>Password</label>
+      <input id="loginPass" type="password" placeholder="password">
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <button id="loginBtn" class="btn-primary">Masuk</button>
+      </div>
+      <p class="small" style="margin-top:12px">Demo credentials: <strong>admin/admin123</strong> atau <strong>user/user123</strong></p>
     </div>
   </div>
 
-  <div class="card">
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:8px;">
-      <button id="exportBtn" class="btn-primary">Export Excel</button>
-      <button id="backupDriveBtn" class="btn-secondary">Backup ke Google Drive</button>
-      <button id="restoreDriveBtn" class="btn-secondary">Restore dari Google Drive</button>
+  <!-- APP -->
+  <div id="mainApp" style="display:none;">
+    <header class="app-header container">
+      <div><h3 style="margin:0"><i class="fas fa-building"></i> Dashboard Karyawan</h3></div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="roleLabel" class="small"></div>
+        <button id="logoutBtn" class="btn-danger">Keluar</button>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- FORM -->
+      <div class="card">
+        <h4 id="formTitle">Tambah Karyawan</h4>
+        <input type="hidden" id="editId" value="">
+        <div class="grid-3">
+          <input id="nama" type="text" placeholder="Nama Lengkap">
+          <input id="nik" type="text" placeholder="NIK (16 digit)">
+          <input id="telepon" type="text" placeholder="Telepon (maks 13 digit)">
+        </div>
+
+        <div class="grid-3">
+          <select id="alamat"><option value="">Pilih Wilayah</option>
+            <option>Bandar Lampung</option><option>Metro</option><option>Lampung Selatan</option>
+            <option>Lampung Tengah</option><option>Lampung Utara</option><option>Way Kanan</option>
+            <option>Tulang Bawang</option><option>Tulang Bawang Barat</option><option>Mesuji</option>
+            <option>Pesawaran</option><option>Pringsewu</option><option>Tanggamus</option>
+            <option>Pesisir Barat</option><option>Lampung Barat</option><option>Lampung Timur</option>
+          </select>
+          <input id="mulai" type="date">
+          <select id="pendidikan"><option value="">Pendidikan</option>
+            <option>SMA/SMK/MA</option><option>Sarjana</option><option>Magister</option><option>Doktor</option>
+          </select>
+        </div>
+
+        <div class="grid-3">
+          <select id="jabatan"><option value="">Jabatan</option>
+            <option>Direktur</option><option>Manajer</option><option>Teller</option><option>Accounting</option>
+            <option>Account Officer</option><option>Customer Service</option><option>Marketing</option>
+          </select>
+          <select id="status"><option value="">Status</option>
+            <option>Aktif</option><option>Non Aktif</option><option>Nonjob</option><option>Resign</option><option>Lainnya</option>
+          </select>
+          <div></div>
+        </div>
+
+        <div class="grid-2" style="margin-top:8px;">
+          <div>
+            <label>Upload Dokumen (pdf/doc/img)</label>
+            <input id="fileUpload" type="file" accept=".pdf,.doc,.docx,image/*">
+            <div id="fileHint" class="file-name"></div>
+          </div>
+          <div>
+            <label>Foto Profil</label>
+            <input id="fotoUpload" type="file" accept="image/*">
+            <div id="fotoHint" class="file-name"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px;">
+          <button id="clearBtn" class="btn-secondary">Clear</button>
+          <button id="saveBtn" class="btn-primary">Simpan</button>
+        </div>
+      </div>
+
+      <!-- TABLE + ACTIONS -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+          <input id="searchInput" type="text" placeholder="Cari karyawan..." style="max-width:320px">
+          <div class="top-actions">
+            <button id="sampleBtn" class="btn-secondary" title="Isi data contoh">Isi Contoh</button>
+            <button id="printBtn" class="btn-secondary">Cetak</button>
+            <button id="exportBtn" class="btn-primary">Export Excel</button>
+            <button id="backupDriveBtn" class="btn-secondary">Backup ke Google Drive</button>
+            <button id="restoreDriveBtn" class="btn-secondary">Restore dari Google Drive</button>
+          </div>
+        </div>
+
+        <table id="karyawanTable">
+          <thead>
+            <tr>
+              <th>Foto</th><th>Nama</th><th>NIK</th><th>Alamat</th><th>Telepon</th><th>Pendidikan</th><th>Jabatan</th><th>Status</th><th>Mulai</th><th>File</th><th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
-    <table id="karyawanTable">
-      <thead>
-        <tr>
-          <th>Foto</th>
-          <th>Nama</th>
-          <th>NIK</th>
-          <th>Alamat</th>
-          <th>Telepon</th>
-          <th>Pendidikan</th>
-          <th>Jabatan</th>
-          <th>Status</th>
-          <th>File</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
   </div>
 
   <script>
-    // === Data lokal
-    let allData = JSON.parse(localStorage.getItem("karyawanData")||"[]");
+    /*******************************
+     *  CONFIG (ganti sesuai kebutuhan)
+     *******************************/
+    // Login demo (hardcoded). Untuk production bisa gunakan Supabase Auth later.
+    const ADMIN_USER = 'admin', ADMIN_PASS = 'admin123';
+    const USER_USER = 'user', USER_PASS = 'user123';
 
-    // === CRUD ===
-    function renderAll(){
-      const tbody = document.querySelector("#karyawanTable tbody");
-      tbody.innerHTML = "";
-      allData.forEach((it,idx)=>{
-        const tr = document.createElement("tr");
-        // foto
-        const fotoTd = document.createElement("td");
+    // --- Supabase config (opsional) ---
+    // Jika tidak pakai Supabase, biarkan placeholder.
+    const SUPABASE_URL = 'https://your-project.supabase.co'; // ganti
+    const SUPABASE_KEY = 'your-anon-public-key'; // ganti
+    const SUPABASE_TABLE = 'karyawan';
+    const SUPABASE_BUCKET = 'profiles';
+    const SUPABASE_HEADERS = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json'
+    };
+    function getFileHeaders(type){ return {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': type||'application/octet-stream'}; }
+
+    // --- Apps Script Web App URL (Backup/Restore) ---
+    const APPS_SCRIPT_WEBAPP = 'https://script.google.com/macros/s/AKfycbxBddB4Qb9MUKY_qF3M10DXK0o96Won_-0tD8FvbZGt_xZ4b1PyfzVPZlaoQU49BQYenQ/exec'; // <-- GANTI dengan URL Web App Anda
+
+    /*******************************
+     *  STATE
+     *******************************/
+    let currentRole = '';
+    let allData = [];
+
+    /*******************************
+     *  HELPERS
+     *******************************/
+    function escapeHtml(s){ if(s===undefined||s===null) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function readFileAsDataURL(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
+
+    /*******************************
+     *  Supabase storage upload (foto)
+     *  If Supabase not configured, returns ''
+     *******************************/
+    async function uploadFotoToStorage(file, nik){
+      if(!file) return '';
+      if(!SUPABASE_URL || !SUPABASE_KEY || SUPABASE_KEY.startsWith('your')) { console.warn('Supabase not configured - skipping storage upload'); return ''; }
+      try{
+        const filePath = `${encodeURIComponent(nik)}_${Date.now()}_${encodeURIComponent(file.name)}`;
+        const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${filePath}`;
+        const res = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: getFileHeaders(file.type),
+          body: file
+        });
+        if(!res.ok){ console.error('Upload foto gagal', await res.text()); return ''; }
+        return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${filePath}`;
+      }catch(e){ console.error('uploadFotoToStorage error', e); return ''; }
+    }
+
+    /*******************************
+     *  Supabase backup (optional)
+     *  Sends minimal fields only (no large base64 fileData)
+     *******************************/
+    async function backupKeSupabase(data){
+      if(!SUPABASE_URL||!SUPABASE_KEY||SUPABASE_KEY.startsWith('your')){ console.warn('Supabase not configured - skip backup'); return; }
+      if(!navigator.onLine){ console.warn('Offline - skip supabase backup'); return; }
+      try{
+        const payload = data.map(d => ({
+          nik: d.nik||'', nama: d.nama||'', alamat: d.alamat||'', telepon: d.telepon||'',
+          mulai: d.mulai||'', pendidikan: d.pendidikan||'', jabatan: d.jabatan||'', status: d.status||'',
+          fileName: d.fileName||'', fotoUrl: d.fotoUrl||''
+        }));
+        const url = `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=nik`;
+        const res = await fetch(url, { method:'POST', headers:{...SUPABASE_HEADERS,'Prefer':'resolution=merge-duplicates'}, body: JSON.stringify(payload) });
+        if(!res.ok){ console.warn('Backup response tidak OK', res.status, await res.text()); } else console.log('Backup sukses ke Supabase');
+      }catch(err){ console.error('backupKeSupabase error', err); }
+    }
+
+    /*******************************
+     *  Local storage helpers
+     *******************************/
+    function loadLocalData(){ try{ allData = JSON.parse(localStorage.getItem('karyawanData'))||[]; }catch(e){ allData=[]; } }
+    function saveLocal(){ localStorage.setItem('karyawanData', JSON.stringify(allData)); }
+
+    /*******************************
+     *  CRUD UI
+     *******************************/
+    function renderAll(list){
+      const data = Array.isArray(list) ? list : allData;
+      const tbody = document.querySelector('#karyawanTable tbody'); tbody.innerHTML = '';
+      data.forEach((it, idx)=>{
+        const tr = document.createElement('tr');
+
+        const fotoTd = document.createElement('td');
         if(it.fotoUrl){
-          const img = document.createElement("img");
-          img.src = it.fotoUrl;
-          img.className = "profile-thumb";
+          const img = document.createElement('img'); img.src = it.fotoUrl; img.className='profile-thumb';
           fotoTd.appendChild(img);
-        } else fotoTd.textContent = "-";
+        } else fotoTd.textContent = '-';
         tr.appendChild(fotoTd);
-        // kolom lain
-        tr.innerHTML += `
-          <td>${it.nama}</td>
-          <td>${it.nik}</td>
-          <td>${it.alamat||""}</td>
-          <td>${it.telepon||""}</td>
-          <td>${it.pendidikan||""}</td>
-          <td>${it.jabatan||""}</td>
-          <td>${it.status||""}</td>
-          <td>${it.fileName||"-"}</td>
-          <td>
-            <button onclick="editData(${idx})">Edit</button>
-            <button onclick="deleteData(${idx})">Hapus</button>
-          </td>
-        `;
+
+        tr.appendChild(cell(it.nama||'-'));
+        tr.appendChild(cell(it.nik||'-'));
+        tr.appendChild(cell(it.alamat||'-'));
+        tr.appendChild(cell(it.telepon||'-'));
+        tr.appendChild(cell(it.pendidikan||'-'));
+        tr.appendChild(cell(it.jabatan||'-'));
+        tr.appendChild(cell(it.status||'-'));
+        tr.appendChild(cell(it.mulai||'-'));
+
+        const fileTd = document.createElement('td');
+        if(it.fileName && it.fileData){
+          const a = document.createElement('a'); a.href = it.fileData; a.download = it.fileName; a.textContent = 'Download'; a.style.textDecoration='none';
+          fileTd.appendChild(a);
+        } else fileTd.textContent = it.fileName ? it.fileName : '-';
+        tr.appendChild(fileTd);
+
+        const actionTd = document.createElement('td');
+        if(currentRole === 'admin'){
+          const wrap = document.createElement('div'); wrap.className='action-buttons';
+          const editBtn = document.createElement('button'); editBtn.className='btn-secondary'; editBtn.textContent='Edit'; editBtn.onclick = ()=>editKaryawan(idx);
+          const delBtn = document.createElement('button'); delBtn.className='btn-danger'; delBtn.textContent='Hapus';
+          delBtn.onclick = ()=>{ if(confirm('Hapus data ini?')){ allData.splice(idx,1); saveLocal(); backupKeSupabase(allData); renderAll(); } };
+          wrap.appendChild(editBtn); wrap.appendChild(delBtn); actionTd.appendChild(wrap);
+        } else if(currentRole === 'operator'){
+          actionTd.textContent = '-';
+        } else {
+          actionTd.textContent = '-';
+        }
+        tr.appendChild(actionTd);
+
         tbody.appendChild(tr);
       });
     }
 
+    function cell(txt){ const td=document.createElement('td'); td.textContent = txt; return td; }
+
+    function editKaryawan(i){
+      if(typeof i!=='number') return;
+      const r = allData[i]||{};
+      document.getElementById('editId').value = i;
+      ['nama','nik','alamat','telepon','mulai','pendidikan','jabatan','status'].forEach(id=> document.getElementById(id).value = r[id]||'');
+      document.getElementById('fileHint').textContent = r.fileName ? `File terpasang: ${r.fileName}` : '';
+      document.getElementById('fotoHint').textContent = r.fotoUrl ? `Foto: terpasang` : '';
+      document.getElementById('formTitle').textContent = 'Edit Karyawan';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
     function clearForm(){
-      document.querySelectorAll("#editId,#nama,#nik,#alamat,#telepon,#mulai,#pendidikan,#jabatan,#status").forEach(el=>el.value="");
-      document.querySelector("#fileUpload").value="";
-      document.querySelector("#fotoUpload").value="";
+      document.getElementById('editId').value='';
+      ['nama','nik','alamat','telepon','mulai','pendidikan','jabatan','status'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      document.getElementById('fileUpload').value = '';
+      document.getElementById('fotoUpload').value = '';
+      document.getElementById('fileHint').textContent=''; document.getElementById('fotoHint').textContent='';
+      document.getElementById('formTitle').textContent = 'Tambah Karyawan';
     }
 
-    function saveData(){
-      const id = document.getElementById("editId").value;
-      const data = {
-        nama: document.getElementById("nama").value,
-        nik: document.getElementById("nik").value,
-        alamat: document.getElementById("alamat").value,
-        telepon: document.getElementById("telepon").value,
-        mulai: document.getElementById("mulai").value,
-        pendidikan: document.getElementById("pendidikan").value,
-        jabatan: document.getElementById("jabatan").value,
-        status: document.getElementById("status").value,
-        fileName: document.getElementById("fileUpload").files[0]?.name || "",
-        fotoUrl: ""
-      };
+    async function simpanKaryawan(){
+      const nama = document.getElementById('nama').value.trim();
+      const nik = document.getElementById('nik').value.trim();
+      const alamat = document.getElementById('alamat').value.trim();
+      const telepon = document.getElementById('telepon').value.trim();
+      const mulai = document.getElementById('mulai').value;
+      const pendidikan = document.getElementById('pendidikan').value;
+      const jabatan = document.getElementById('jabatan').value;
+      const status = document.getElementById('status').value;
+      const editId = document.getElementById('editId').value;
 
-      // foto upload → hanya untuk preview lokal, backup akan ambil dari Supabase URL kalau ada
-      const fotoFile = document.getElementById("fotoUpload").files[0];
-      if(fotoFile){
-        data.fotoUrl = URL.createObjectURL(fotoFile);
+      if(!nama || !nik){ alert('Nama & NIK wajib diisi'); return; }
+      if(!/^[0-9]{1,16}$/.test(nik)){ alert('NIK harus angka (maks 16 digit)'); return; }
+      if(telepon && (!/^[0-9]+$/.test(telepon) || telepon.length>13)){ alert('Telepon hanya angka (maks 13)'); return; }
+
+      const fileInput = document.getElementById('fileUpload');
+      const fotoInput = document.getElementById('fotoUpload');
+
+      let fileName = '', fileData = '', fotoUrl = '';
+
+      // read doc/file as base64 only for local storage (we won't send fileData to Supabase)
+      if(fileInput && fileInput.files && fileInput.files[0]){
+        const f = fileInput.files[0];
+        fileName = f.name;
+        try{ fileData = await readFileAsDataURL(f); document.getElementById('fileHint').textContent = `File terpasang: ${fileName}`;}catch(e){ console.warn('read file error',e); }
       }
 
-      if(id){
-        allData[id] = data;
+      // foto: upload to supabase if configured; else createObjectURL (preview)
+      if(fotoInput && fotoInput.files && fotoInput.files[0]){
+        const f = fotoInput.files[0];
+        document.getElementById('fotoHint').textContent = 'Mengupload foto...';
+        const uploadedUrl = await uploadFotoToStorage(f, nik);
+        if(uploadedUrl){
+          fotoUrl = uploadedUrl;
+          document.getElementById('fotoHint').textContent = 'Foto terupload';
+        } else {
+          // fallback to local preview (object URL)
+          fotoUrl = URL.createObjectURL(f);
+          document.getElementById('fotoHint').textContent = 'Preview lokal (Supabase tidak dikonfigurasi)';
+        }
+      }
+
+      const item = { nama, nik, alamat, telepon, pendidikan, jabatan, status, mulai, fileName, fileData, fotoUrl };
+
+      if(editId !== ''){
+        const idx = parseInt(editId,10);
+        if(!isNaN(idx) && idx>=0 && idx<allData.length) allData[idx] = item;
       } else {
-        allData.push(data);
+        const found = allData.findIndex(x => x.nik === nik);
+        if(found>=0) allData[found] = item; else allData.push(item);
       }
-      localStorage.setItem("karyawanData", JSON.stringify(allData));
-      clearForm();
-      renderAll();
+
+      saveLocal();
+      // optional backup to supabase (without fileData)
+      backupKeSupabase(allData);
+      clearForm(); renderAll();
     }
 
-    function editData(idx){
-      const d = allData[idx];
-      document.getElementById("editId").value = idx;
-      document.getElementById("nama").value = d.nama;
-      document.getElementById("nik").value = d.nik;
-      document.getElementById("alamat").value = d.alamat;
-      document.getElementById("telepon").value = d.telepon;
-      document.getElementById("mulai").value = d.mulai;
-      document.getElementById("pendidikan").value = d.pendidikan;
-      document.getElementById("jabatan").value = d.jabatan;
-      document.getElementById("status").value = d.status;
+    /*******************************
+     *  Search, Print, Export
+     *******************************/
+    function searchKaryawan(){
+      const q = (document.getElementById('searchInput')||{}).value.trim().toLowerCase();
+      if(!q){ renderAll(); return; }
+      const filtered = allData.filter(r=>{
+        return (r.nama||'').toLowerCase().includes(q) || (r.nik||'').includes(q) || (r.alamat||'').toLowerCase().includes(q) || (r.jabatan||'').toLowerCase().includes(q);
+      });
+      renderAll(filtered);
     }
 
-    function deleteData(idx){
-      if(confirm("Hapus data ini?")){
-        allData.splice(idx,1);
-        localStorage.setItem("karyawanData", JSON.stringify(allData));
-        renderAll();
-      }
+    function cetakData(){
+      const data = allData || [];
+      let rows = '';
+      data.forEach(it => {
+        rows += `<tr><td>${escapeHtml(it.nama||'-')}</td><td>${escapeHtml(it.nik||'-')}</td><td>${escapeHtml(it.alamat||'-')}</td><td>${escapeHtml(it.telepon||'-')}</td><td>${escapeHtml(it.pendidikan||'-')}</td><td>${escapeHtml(it.jabatan||'-')}</td><td>${escapeHtml(it.status||'-')}</td></tr>`;
+      });
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Cetak</title><style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #333;padding:6px;text-align:center}th{background:#4CAF50;color:#fff}</style></head><body><h2>Data Karyawan</h2><table><thead><tr><th>Nama</th><th>NIK</th><th>Alamat</th><th>Telepon</th><th>Pendidikan</th><th>Jabatan</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+      const w = window.open('data:text/html;charset=utf-8,'+encodeURIComponent(html), '_blank');
+      if(w) w.onload = ()=>{ try{ w.print(); }catch(e){} }; else alert('Pop-up diblokir.');
     }
 
-    document.getElementById("saveBtn").onclick = saveData;
-    document.getElementById("clearBtn").onclick = clearForm;
-
-    // === Export Excel ===
-    document.getElementById("exportBtn").onclick = ()=>{
-      const ws = XLSX.utils.json_to_sheet(allData);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Karyawan");
-      XLSX.writeFile(wb, "Data-Karyawan.xlsx");
-    };
-
-    // === Backup ke Google Drive (via Apps Script) ===
-    async function backupKeGoogleDrive() {
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxBddB4Qb9MUKY_qF3M10DXK0o96Won_-0tD8FvbZGt_xZ4b1PyfzVPZlaoQU49BQYenQ/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(allData)
-        });
-        const result = await response.json();
-        if (result.status === "success") {
-          alert("Backup sukses! File tersimpan di Drive: " + result.fileUrl);
-        } else {
-          alert("Backup gagal: " + result.message);
-        }
-      } catch (err) {
-        console.error("Backup error", err);
-        alert("Backup gagal (lihat console)");
-      }
+    function exportToExcel(){
+      const data = (allData||[]).map(it => ({Nama: it.nama, NIK: it.nik, Alamat: it.alamat, Telepon: it.telepon, Pendidikan: it.pendidikan, Jabatan: it.jabatan, Status: it.status, Mulai: it.mulai}));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Karyawan');
+      XLSX.writeFile(wb, 'Data-Karyawan-' + new Date().toISOString().slice(0,10) + '.xlsx');
     }
 
-    // === Restore dari Google Drive (via Apps Script) ===
-    async function restoreDariGoogleDrive() {
-      try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxBddB4Qb9MUKY_qF3M10DXK0o96Won_-0tD8FvbZGt_xZ4b1PyfzVPZlaoQU49BQYenQ/exec", { method: "GET" });
-        const result = await response.json();
-        if (result.status === "success" && result.data) {
-          allData = result.data;
-          localStorage.setItem("karyawanData", JSON.stringify(allData));
+    /*******************************
+     *  Apps Script Backup / Restore (Drive)
+     *******************************/
+    async function backupKeGoogleDrive(){
+      if(!APPS_SCRIPT_WEBAPP || APPS_SCRIPT_WEBAPP.startsWith('YOUR_')) { alert('Ganti APPS_SCRIPT_WEBAPP dengan URL Web App Anda'); return; }
+      try{
+        const res = await fetch(APPS_SCRIPT_WEBAPP, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(allData) });
+        const j = await res.json();
+        if(j && j.status === 'success') alert('Backup sukses: ' + (j.fileUrl||j.message||''));
+        else alert('Backup gagal: ' + (j.message||'cek console'));
+      }catch(err){ console.error('backup drive error',err); alert('Backup gagal (lihat console)'); }
+    }
+
+    async function restoreDariGoogleDrive(){
+      if(!APPS_SCRIPT_WEBAPP || APPS_SCRIPT_WEBAPP.startsWith('YOUR_')) { alert('Ganti APPS_SCRIPT_WEBAPP dengan URL Web App Anda'); return; }
+      try{
+        const res = await fetch(APPS_SCRIPT_WEBAPP, { method:'GET' });
+        const j = await res.json();
+        if(j && j.status === 'success' && j.data){
+          allData = j.data;
+          saveLocal();
           renderAll();
-          alert("Restore sukses dari backup: " + result.fileUrl);
+          alert('Restore sukses dari: ' + (j.fileUrl||'backup terbaru'));
         } else {
-          alert("Restore gagal: " + result.message);
+          alert('Restore gagal: ' + (j.message||'tidak ada backup'));
         }
-      } catch (err) {
-        console.error("Restore error", err);
-        alert("Restore gagal (lihat console)");
-      }
+      }catch(err){ console.error('restore error',err); alert('Restore gagal (lihat console)'); }
     }
 
-    document.getElementById("backupDriveBtn").onclick = backupKeGoogleDrive;
-    document.getElementById("restoreDriveBtn").onclick = restoreDariGoogleDrive;
+    /*******************************
+     *  Sample data
+     *******************************/
+    function seedSampleData(){
+      const demo = [
+        { nama:'Agus Santoso', nik:'3201012001010001', alamat:'Bandar Lampung', telepon:'081234567890', pendidikan:'Sarjana', jabatan:'Teller', status:'Aktif', mulai:'2020-01-01', fileName:'', fileData:'', fotoUrl:'' },
+        { nama:'Siti Aminah', nik:'3201012001020002', alamat:'Metro', telepon:'081298765432', pendidikan:'SMA/SMK/MA', jabatan:'Customer Service', status:'Non Aktif', mulai:'2019-05-10', fileName:'', fileData:'', fotoUrl:'' },
+        { nama:'Budi Hartono', nik:'3201012001030003', alamat:'Lampung Tengah', telepon:'081212121212', pendidikan:'Magister', jabatan:'Manajer', status:'Resign', mulai:'2018-07-15', fileName:'', fileData:'', fotoUrl:'' }
+      ];
+      demo.forEach(d => { const f = allData.findIndex(x=>x.nik===d.nik); if(f>=0) allData[f]=d; else allData.push(d); });
+      saveLocal(); renderAll(); backupKeSupabase(allData);
+    }
 
-    // init
-    renderAll();
+    /*******************************
+     *  Login / Logout (demo)
+     *******************************/
+    function login(){
+      const role = document.getElementById('roleSelect').value;
+      const u = document.getElementById('loginUser').value.trim();
+      const p = document.getElementById('loginPass').value.trim();
+      if(role==='admin' && u===ADMIN_USER && p===ADMIN_PASS) currentRole='admin';
+      else if(role==='operator' && u===USER_USER && p===USER_PASS) currentRole='operator';
+      else { alert('Login gagal!'); return; }
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('mainApp').style.display='block';
+      document.getElementById('roleLabel').textContent = 'Peran: ' + currentRole.toUpperCase();
+      // load cloud optionally then local
+      loadLocalDataThenRender();
+    }
+
+    function logout(){ if(confirm('Keluar?')) location.reload(); }
+
+    async function loadLocalDataThenRender(){
+      // Try restore from supabase first if configured (optional)
+      if(SUPABASE_URL && SUPABASE_KEY && !SUPABASE_KEY.startsWith('your') && navigator.onLine){
+        try{
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?select=*`, { headers: SUPABASE_HEADERS });
+          if(res.ok){
+            const cloud = await res.json();
+            console.log('Data cloud:', cloud);
+            if(Array.isArray(cloud) && cloud.length){
+              if(confirm('Data cloud ditemukan. Ganti data lokal dengan data dari Supabase? (OK = ganti, Cancel = pakai lokal)')){
+                // map to local shape
+                allData = cloud.map(d=>({
+                  nama: d.nama||'', nik: d.nik||'', alamat: d.alamat||'', telepon: d.telepon||'', pendidikan: d.pendidikan||'', jabatan: d.jabatan||'', status: d.status||'', mulai: d.mulai||'', fileName: d.fileName||'', fileData: '', fotoUrl: d.fotoUrl||''
+                }));
+                saveLocal();
+                renderAll();
+                return;
+              }
+            }
+          } else {
+            console.warn('Restore supabase fetch failed', await res.text());
+          }
+        }catch(e){ console.warn('restore supabase error', e); }
+      }
+      // fallback load local
+      loadLocalData(); renderAll();
+    }
+
+    /*******************************
+     *  Init bindings
+     *******************************/
+    document.addEventListener('DOMContentLoaded', function(){
+      document.getElementById('loginBtn').addEventListener('click', login);
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+      document.getElementById('saveBtn').addEventListener('click', simpanKaryawan);
+      document.getElementById('clearBtn').addEventListener('click', clearForm);
+      document.getElementById('searchInput').addEventListener('input', searchKaryawan);
+      document.getElementById('printBtn').addEventListener('click', cetakData);
+      document.getElementById('exportBtn').addEventListener('click', exportToExcel);
+      document.getElementById('sampleBtn').addEventListener('click', seedSampleData);
+      document.getElementById('backupDriveBtn').addEventListener('click', backupKeGoogleDrive);
+      document.getElementById('restoreDriveBtn').addEventListener('click', restoreDariGoogleDrive);
+
+      // initial load
+      loadLocalData(); renderAll();
+    });
   </script>
 </body>
 </html>
