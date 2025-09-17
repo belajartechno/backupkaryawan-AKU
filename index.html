@@ -183,15 +183,53 @@
     const USER_USER = 'user', USER_PASS = 'user123';
 
     // SUPABASE - ganti sesuai proyek Anda
-    const SUPABASE_URL = 'https://your-project.supabase.co'; // contoh: https://abcd1234.supabase.co
-    const SUPABASE_KEY = 'your-anon-public-key';
+    const SUPABASE_URL = 'https://cptwgqmohesenhqwewoz.supabase.co'; // contoh: https://abcd1234.supabase.co
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwdHdncW1vaGVzZW5ocXdld296Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwNzI2NDQsImV4cCI6MjA3MzY0ODY0NH0.RCmHjaohWUlgtHg1TLId0F9C7wljQQJEV4eOE8DWRCQ';
     const SUPABASE_TABLE = 'karyawan';
     const SUPABASE_BUCKET = 'profiles';
-    const SUPABASE_HEADERS = {
+    
+    // Header untuk operasi CRUD (JSON: insert/update/select tabel)
+  const SUPABASE_HEADERS = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json'
+  };
+
+  // Header untuk upload file (foto/dokumen)
+  function getFileHeaders(fileType) {
+    return {
       'apikey': SUPABASE_KEY,
       'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json'
+      'Content-Type': fileType || 'application/octet-stream'
     };
+  }
+
+  // === Contoh fungsi upload foto ke Storage ===
+  async function uploadFotoToStorage(file, nik) {
+    if (!file) return '';
+    try {
+      // nama file unik: nik_timestamp_namafile
+      const filePath = `${encodeURIComponent(nik)}_${Date.now()}_${encodeURIComponent(file.name)}`;
+      const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${filePath}`;
+
+      const res = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: getFileHeaders(file.type),
+        body: file
+      });
+
+      if (!res.ok) {
+        console.error("Upload foto gagal:", await res.text());
+        return '';
+      }
+
+      // URL publik foto
+      return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${filePath}`;
+    } catch (e) {
+      console.error("uploadFotoToStorage error", e);
+      return '';
+    }
+  };
 
     // GOOGLE DRIVE - ganti dengan kredensial Anda (OAuth client ID & API key)
     const CLIENT_ID = "https://script.google.com/macros/s/AKfycbxBddB4Qb9MUKY_qF3M10DXK0o96Won_-0tD8FvbZGt_xZ4b1PyfzVPZlaoQU49BQYenQ/exec";
