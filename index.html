@@ -393,7 +393,7 @@
      *  Apps Script Backup / Restore (Drive)
      *******************************/
     async function backupKeGoogleDrive(){
-      if(!APPS_SCRIPT_WEBAPP || APPS_SCRIPT_WEBAPP.startsWith('YOUR_')) { alert('Ganti APPS_SCRIPT_WEBAPP dengan URL Web App Anda'); return; }
+      if(!APPS_SCRIPT_WEBAPP || APPS_SCRIPT_WEBAPP.startsWith('YOUR_')) { alert('https://script.google.com/macros/s/AKfycbxBddB4Qb9MUKY_qF3M10DXK0o96Won_-0tD8FvbZGt_xZ4b1PyfzVPZlaoQU49BQYenQ/exec'); return; }
       try{
         const res = await fetch(APPS_SCRIPT_WEBAPP, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(allData) });
         const j = await res.json();
@@ -403,7 +403,7 @@
     }
 
     async function restoreDariGoogleDrive(){
-      if(!APPS_SCRIPT_WEBAPP || APPS_SCRIPT_WEBAPP.startsWith('YOUR_')) { alert('Ganti APPS_SCRIPT_WEBAPP dengan URL Web App Anda'); return; }
+      if(!APPS_SCRIPT_WEBAPP || APPS_SCRIPT_WEBAPP.startsWith('YOUR_')) { alert('https://script.google.com/macros/s/AKfycbxBddB4Qb9MUKY_qF3M10DXK0o96Won_-0tD8FvbZGt_xZ4b1PyfzVPZlaoQU49BQYenQ/exec'); return; }
       try{
         const res = await fetch(APPS_SCRIPT_WEBAPP, { method:'GET' });
         const j = await res.json();
