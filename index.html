@@ -415,7 +415,7 @@
           document.getElementById('fotoHint').textContent = fotoUrl ? 'Foto terupload' : 'Upload foto gagal';
         }
 
-        const item = { nama, nik, alamat, telepon, mulai, pendidikan, jabatan, status, fileName, fileData, fotoUrl };
+        const item = { nama, nik, alamat, telepon, mulai, pendidikan, jabatan, status, fileName, fotoUrl };
 
         upsertItem(editId, item);
       }catch(err){
